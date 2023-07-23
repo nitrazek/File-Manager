@@ -17,5 +17,7 @@ public class File {
 
     private Long sizeInBytes;
 
-    private String folder;
+    @ManyToOne
+    @JoinColumn(name = "folder_id")
+    private Folder folder;
 }
