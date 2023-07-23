@@ -54,6 +54,11 @@ public class FileController {
         if(oldFileData.isEmpty())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
+        Optional<File> conflictFileData = fileRepository.findByName(newFileData.getName());
+
+        if(conflictFileData.isPresent())
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+
         File updatedFileData = oldFileData.get();
         updatedFileData.setName(newFileData.getName());
         updatedFileData.setSizeInBytes(newFileData.getSizeInBytes());
