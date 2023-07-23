@@ -38,8 +38,12 @@ public class FileController {
 
     @PostMapping("/addFile")
     public ResponseEntity<File> addFile(@RequestBody File file) {
-        File fileData = fileRepository.save(file);
+        Optional<File> existingFile = fileRepository.findByName(file.getName());
 
+        if(existingFile.isPresent())
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+
+        File fileData = fileRepository.save(file);
         return new ResponseEntity<>(fileData, HttpStatus.OK);
     }
 
