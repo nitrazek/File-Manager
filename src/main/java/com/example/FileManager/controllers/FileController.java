@@ -38,6 +38,9 @@ public class FileController {
 
     @PostMapping("/addFile")
     public ResponseEntity<File> addFile(@RequestBody File file) {
+        if(file.getName() == null || file.getSizeInBytes() == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
         Optional<File> existingFile = fileRepository.findByName(file.getName());
 
         if(existingFile.isPresent())
@@ -49,6 +52,9 @@ public class FileController {
 
     @PostMapping("/updateFileByName/{name}")
     public ResponseEntity<File> updateFileByName(@PathVariable String name, @RequestBody File newFileData) {
+        if(newFileData.getName() == null || newFileData.getSizeInBytes() == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
         Optional<File> oldFileData = fileRepository.findByName(name);
 
         if(oldFileData.isEmpty())
