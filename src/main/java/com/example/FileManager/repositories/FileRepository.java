@@ -1,6 +1,6 @@
 package com.example.FileManager.repositories;
 
-import com.example.FileManager.models.File;
+import com.example.FileManager.models.entities.File;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

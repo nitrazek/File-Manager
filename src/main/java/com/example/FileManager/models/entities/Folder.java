@@ -1,5 +1,7 @@
-package com.example.FileManager.models;
+package com.example.FileManager.models.entities;
 
+import com.example.FileManager.models.dtos.FileDto;
+import com.example.FileManager.models.dtos.FolderDto;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -25,4 +27,12 @@ public class Folder {
 
     @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL)
     private List<Folder> subfolders;
+
+    public static Folder fromDto(FolderDto folderDto) {
+        Folder folder = new Folder();
+
+        folder.setName(folderDto.getName());
+
+        return folder;
+    }
 }

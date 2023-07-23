@@ -1,5 +1,6 @@
-package com.example.FileManager.models;
+package com.example.FileManager.models.entities;
 
+import com.example.FileManager.models.dtos.FileDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,4 +21,13 @@ public class File {
     @ManyToOne
     @JoinColumn(name = "folder_id")
     private Folder folder;
+
+    public static File fromDto(FileDto fileDto) {
+        File file = new File();
+
+        file.setName(fileDto.getName());
+        file.setSizeInBytes(fileDto.getSizeInBytes());
+
+        return file;
+    }
 }
