@@ -1,16 +1,16 @@
 package com.example.FileManager.controllers;
 
+import com.example.FileManager.helpers.FolderStat;
+import com.example.FileManager.helpers.FolderStatModel;
+import com.example.FileManager.models.entities.Folder;
 import com.example.FileManager.repositories.FileRepository;
+import com.example.FileManager.repositories.FolderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
@@ -19,8 +19,11 @@ public class ReportController {
     @Autowired
     private FileRepository fileRepository;
 
-    @GetMapping("/1")
-    public ResponseEntity<Map<String, Object>> report1() {
+    @Autowired
+    private FolderRepository folderRepository;
+
+    @GetMapping("/files")
+    public ResponseEntity<Map<String, Object>> filesReport() {
         AtomicLong avg = new AtomicLong(0L);
         AtomicLong max = new AtomicLong(0L);
         AtomicLong min = new AtomicLong(Long.MAX_VALUE);
@@ -42,13 +45,20 @@ public class ReportController {
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 
-    @GetMapping("/2")
-    public void report2() {
+    @GetMapping("/folders/{amount}")
+    public Map<String, Object> foldersReport(@PathVariable int amount) {
+        List<Folder> folderList = folderRepository.findByParentFolderNull();
 
+        FolderStat folderStat = new FolderStat(folderList, amount);
+        Map<String, Object> result = new HashMap<>();
+        result.put("The top " + amount + " folders by file size", folderStat.getBySize());
+        result.put("The top " + amount + " folders by file count", folderStat.getByCount());
+        result.put("The top " + amount + " folders by file by average file size", folderStat.getByAverageSize());
+        return result;
     }
 
-    @GetMapping("/3")
-    public void report3() {
+    @GetMapping("/hierarchy")
+    public void hierarchyReport() {
 
     }
 }

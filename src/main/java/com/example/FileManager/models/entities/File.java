@@ -10,6 +10,7 @@ import lombok.*;
 public class File {
 
     @Id
+    @ToString.Exclude
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -18,6 +19,7 @@ public class File {
 
     private Long sizeInBytes;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "folder_id")
     private Folder folder;
