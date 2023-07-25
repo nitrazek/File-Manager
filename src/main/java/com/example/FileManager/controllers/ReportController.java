@@ -1,5 +1,7 @@
 package com.example.FileManager.controllers;
 
+import com.example.FileManager.helpers.FolderDepth;
+import com.example.FileManager.helpers.FolderDepthModel;
 import com.example.FileManager.helpers.FolderStat;
 import com.example.FileManager.helpers.FolderStatModel;
 import com.example.FileManager.models.entities.Folder;
@@ -51,14 +53,17 @@ public class ReportController {
 
         FolderStat folderStat = new FolderStat(folderList, amount);
         Map<String, Object> result = new HashMap<>();
-        result.put("The top " + amount + " folders by file size", folderStat.getBySize());
-        result.put("The top " + amount + " folders by file count", folderStat.getByCount());
-        result.put("The top " + amount + " folders by file by average file size", folderStat.getByAverageSize());
+        result.put("Top " + amount + " by file size", folderStat.getBySize());
+        result.put("Top " + amount + " by file count", folderStat.getByCount());
+        result.put("Top " + amount + " by average file size", folderStat.getByAverageSize());
         return result;
     }
 
     @GetMapping("/hierarchy")
-    public void hierarchyReport() {
+    public List<FolderDepthModel> hierarchyReport() {
+        List<Folder> folderList = folderRepository.findByParentFolderNull();
 
+        FolderDepth folderDepth = new FolderDepth(folderList);
+        return folderDepth.getDeepestPath();
     }
 }
