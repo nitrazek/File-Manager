@@ -1,5 +1,6 @@
 package com.example.FileManager.controllers;
 
+import com.example.FileManager.helpers.FolderCycle;
 import com.example.FileManager.models.dtos.FolderDto;
 import com.example.FileManager.models.entities.Folder;
 import com.example.FileManager.repositories.FolderRepository;
@@ -76,13 +77,17 @@ public class FolderController {
         if(oldFolderData.isEmpty())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        Optional<Folder> conflictFolderData = folderRepository.findByName(newFolderDtoData.getName());
-
-        if(conflictFolderData.isPresent())
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-
         Folder updatedFolderData = oldFolderData.get();
-        updatedFolderData.setName(newFolderDtoData.getName());
+
+        if(!updatedFolderData.getName().equals(newFolderDtoData.getName())) {
+            Optional<Folder> conflictFolderData = folderRepository.findByName(newFolderDtoData.getName());
+
+            if(conflictFolderData.isPresent())
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+
+            updatedFolderData.setName(newFolderDtoData.getName());
+        }
+
 
         if(newFolderDtoData.getParentFolderName() != null) {
             Optional<Folder> folderData = folderRepository.findByName(newFolderDtoData.getParentFolderName());
@@ -91,6 +96,10 @@ public class FolderController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
             updatedFolderData.setParentFolder(folderData.get());
+
+            FolderCycle folderCycle = new FolderCycle(updatedFolderData);
+            if(folderCycle.isCycleDetected())
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
         Folder folderData = folderRepository.save(updatedFolderData);
