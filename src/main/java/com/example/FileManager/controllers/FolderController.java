@@ -68,7 +68,7 @@ public class FolderController {
     }
 
     @PostMapping("/updateFolderByName/{name}")
-    public ResponseEntity<FolderDto> updateFolderByName(@PathVariable String name, @RequestBody @Valid FolderDto newFolderDtoData, BindingResult bindingResult) {
+    public ResponseEntity<?> updateFolderByName(@PathVariable String name, @RequestBody @Valid FolderDto newFolderDtoData, BindingResult bindingResult) {
         if(bindingResult.hasErrors())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
@@ -99,7 +99,7 @@ public class FolderController {
 
             FolderCycle folderCycle = new FolderCycle(updatedFolderData);
             if(folderCycle.isCycleDetected())
-                return new ResponseEntity<>(HttpStatus.CONFLICT);
+                return new ResponseEntity<>(folderCycle.getCycleList(), HttpStatus.CONFLICT);
         }
 
         Folder folderData = folderRepository.save(updatedFolderData);
